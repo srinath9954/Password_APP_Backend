@@ -23,7 +23,7 @@ firebase_admin.initialize_app(cred)
 load_dotenv()
 
 # MongoDB setup
-client = MongoClient("mongodb+srv://srinath9954:1234@cluster0.edjunkm.mongodb.net/")
+client = MongoClient(os.getenv('URL'))
 db = client["password_manager"]
 collection = db["passwords"]
 
