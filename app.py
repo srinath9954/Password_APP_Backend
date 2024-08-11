@@ -13,7 +13,7 @@ app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
 
 # Firebase setup
-cred = credentials.Certificate('config/firebase_credentials.json')
+cred = credentials.Certificate('/etc/secrets/firebase_credentials.json')
 firebase_admin.initialize_app(cred)
 load_dotenv()
 # MongoDB setup
