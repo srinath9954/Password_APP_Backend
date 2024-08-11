@@ -1,5 +1,4 @@
-Flask
-flask
+Flask==2.0.1
 pymongo==4.1.1
 cryptography==40.0.1
 firebase-admin==6.2.0
