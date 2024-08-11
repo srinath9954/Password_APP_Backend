@@ -7,15 +7,21 @@ from bson.objectid import ObjectId
 from flask_cors import CORS
 from dotenv import load_dotenv
 import os
+
 app = Flask(__name__)
 
-# Initialize CORS with specific origin
-CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
+# Initialize CORS with specific origin and methods
+CORS(app, resources={r"/*": {
+    "origins": "*",
+    "methods": ["GET", "POST", "DELETE", "OPTIONS"],
+    "allow_headers": ["Content-Type", "Authorization"]
+}})
 
 # Firebase setup
-cred = credentials.Certificate('/etc/secrets/firebase_credentials.json')
+cred = credentials.Certificate('config/firebase_credentials.json')
 firebase_admin.initialize_app(cred)
 load_dotenv()
+
 # MongoDB setup
 client = MongoClient("mongodb+srv://srinath9954:1234@cluster0.edjunkm.mongodb.net/")
 db = client["password_manager"]
@@ -54,10 +60,20 @@ def get_passwords(user_id):
         })
     return jsonify(result)
 
-@app.route('/delete_password/<id>', methods=['DELETE'])
-def delete_password(id):
-    collection.delete_one({"_id": ObjectId(id)})
+@app.route('/delete_password', methods=['DELETE'])
+def delete_password():
+    data = request.json
+    collection.delete_one({"_id": ObjectId(data['id'])})
     return jsonify({"message": "Password deleted successfully!"})
+
+# Handle OPTIONS requests manually (if needed)
+@app.route('/delete_password', methods=['OPTIONS'])
+def handle_options():
+    response = jsonify({'message': 'CORS preflight request successful'})
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    response.headers.add('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, DELETE')
+    response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
+    return response
 
 if __name__ == '__main__':
     app.run(debug=True)
